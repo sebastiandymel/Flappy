@@ -19,6 +19,8 @@ var birdImage = null;
 var backgroundImage = null;
 var topBarImage = null;
 var bottomBarImage = null;
+var isJumping = false;
+var jump_increment = 0;
 
 topBarImage = new Image();
 topBarImage.src = "bar1.png";
@@ -109,9 +111,17 @@ function draw() {
   drawScore();
 
   // UPDATE PLAYER POSITION
+  var increment = player_speed;
   if (!colision) {
-    if (isUp && player_y > player_height) {
-      player_y -= player_speed * 5;
+    if (isJumping) {
+      jump_increment += increment;
+      player_y -= increment;
+      if (jump_increment > player_speed *  8 || player_y < player_height) {
+        isJumping = false;
+        jump_increment = 0;
+      }
+    } else if (isUp && player_y > player_height) {
+      isJumping = true;
     } else if (player_y < canvas.height - player_height) {
       player_y += player_speed;
     }
