@@ -2,7 +2,6 @@ import _ from "lodash";
 
 const refresh_rate_ms = 50;
 const bar_width = 50;
-const bar_speed = 5;
 const player_height = 60;
 const player_speed = 6;
 
@@ -15,8 +14,17 @@ var player_y;
 var isUp = false;
 var colision = false;
 var player_center_x = 100;
+var bar_speed = 5;
 var birdImage = null;
 var backgroundImage = null;
+var topBarImage = null;
+var bottomBarImage = null;
+
+topBarImage = new Image();
+topBarImage.src = "bar1.png";
+
+bottomBarImage = new Image();
+bottomBarImage.src = "bar2.png";
 
 birdImage = new Image();
 birdImage.src = "bird_1.PNG";
@@ -67,15 +75,15 @@ function draw() {
 
   ctx.drawImage(backgroundImage, 0, 0);
 
-  var gapSize = player_height * 3.5;
-
   // DRAW BARS
   for (var i = 0; i < bars.length; i++) {
     bars[i].x -= bar_speed;
+    var gapSize = player_height * 3.5;
 
     if (bars[i].x < -bar_width) {
       bars[i].x = canvas.width;
       bars[i].scored = false;
+      gapSize = calculateGap();
     }
 
     var x = bars[i].x;
@@ -83,17 +91,8 @@ function draw() {
     var height = canvas.height - bars[i].gap - gapSize;
     var width = bar_width;
 
-    ctx.beginPath();
-    ctx.rect(x, y, width, height);
-    ctx.fillStyle = "green";
-    ctx.fill();
-    ctx.closePath();
-
-    ctx.beginPath();
-    ctx.rect(x, height + gapSize, width, bars[i].gap);
-    ctx.fillStyle = "green";
-    ctx.fill();
-    ctx.closePath();
+    ctx.drawImage(topBarImage, x, y, width, height);
+    ctx.drawImage(bottomBarImage, x, height + gapSize, width, bars[i].gap);
 
     var r1 = toRect(x, y, width, height);
     var r2 = toRect(x, height + gapSize, width, bars[i].gap);
@@ -106,6 +105,7 @@ function draw() {
     }
   }
 
+  updateSpeed();
   drawScore();
 
   // UPDATE PLAYER POSITION
@@ -138,6 +138,13 @@ function drawGameOver() {
 
 function drawScore() {
   scoreElement.innerHTML = scoreValue;
+
+  if (!colision) {
+    ctx.font = "30px Arial";
+    ctx.fillStyle = "black";
+    ctx.textAlign = "left";
+    ctx.fillText("Score: " + scoreValue, 20, canvas.height - 20);
+  }
 }
 
 function keyDownHandler(e) {
@@ -199,4 +206,30 @@ function toRect(x, y, width, height) {
     top: y,
     bottom: y + height
   };
+}
+
+function updateSpeed() {
+  if (scoreValue > 400) {
+    bar_speed = 12;
+  } else if (scoreValue > 300) {
+    bar_speed = 10;
+  } else if (scoreValue > 200) {
+    bar_speed = 9;
+  } else if (scoreValue > 150) {
+    bar_speed = 8;
+  } else if (scoreValue > 100) {
+    bar_speed = 7;
+  } else if (scoreValue > 50) {
+    bar_speed = 6;
+  }
+}
+
+function calculateGap() {
+  var factor = 3.5;
+  if (scoreValue > 50) {
+    factor = 1;
+  } else if (scoreValue > 250) {
+    factor = 2;
+  }
+  return player_height * factor;
 }
