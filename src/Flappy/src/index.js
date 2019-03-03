@@ -3,7 +3,7 @@ import _ from "lodash";
 const refresh_rate_ms = 50;
 const bar_width = 50;
 const player_height = 60;
-const player_speed = 6;
+var player_speed = 6;
 
 var canvas = null;
 var scoreElement = null;
@@ -116,7 +116,7 @@ function draw() {
     if (isJumping) {
       jump_increment += increment;
       player_y -= increment;
-      if (jump_increment > player_speed *  8 || player_y < player_height) {
+      if (jump_increment > player_speed * 8 || player_y < player_height) {
         isJumping = false;
         jump_increment = 0;
       }
@@ -219,7 +219,9 @@ function toRect(x, y, width, height) {
 }
 
 function updateSpeed() {
-  if (scoreValue > 400) {
+  if (scoreValue > 500) {
+    bar_speed = 13;
+  } else if (scoreValue > 400) {
     bar_speed = 12;
   } else if (scoreValue > 300) {
     bar_speed = 10;
