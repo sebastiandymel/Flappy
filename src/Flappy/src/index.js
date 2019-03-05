@@ -16,6 +16,7 @@ var colision = false;
 var player_center_x = 100;
 var bar_speed = 5;
 var birdImage = null;
+var birdImage2 = null;
 var backgroundImage = null;
 var topBarImage = null;
 var bottomBarImage = null;
@@ -30,6 +31,9 @@ bottomBarImage.src = "bar2.png";
 
 birdImage = new Image();
 birdImage.src = "bird_1.PNG";
+
+birdImage2 = new Image();
+birdImage2.src = "bird_2.png";
 
 backgroundImage = new Image();
 backgroundImage.src = "background.png";
@@ -58,7 +62,8 @@ function restart() {
     bars[i] = {
       x: offset * i + canvas.width / 2,
       gap: 30 * (i + 1),
-      scored: false
+      scored: false,
+      gapSize: player_height * 3.5
     };
   }
   scoreValue = 0;
@@ -80,14 +85,14 @@ function draw() {
   // DRAW BARS
   for (var i = 0; i < bars.length; i++) {
     bars[i].x -= bar_speed;
-    var gapSize = player_height * 3.5;
 
     if (bars[i].x < -bar_width) {
       bars[i].x = canvas.width;
       bars[i].scored = false;
-      gapSize = calculateGap();
+      bars[i].gapSize = calculateGap();
     }
 
+    var gapSize = bars[i].gapSize;
     var x = bars[i].x;
     var y = 0;
     var height = canvas.height - bars[i].gap - gapSize;
@@ -127,8 +132,12 @@ function draw() {
     }
   }
 
+  var bird = birdImage;
+  if (isJumping) {
+    bird = birdImage2;
+  }
   ctx.drawImage(
-    birdImage,
+    bird,
     player_center_x - player_height / 2 - 12,
     player_y - player_height / 2
   );
@@ -237,10 +246,14 @@ function updateSpeed() {
 }
 
 function calculateGap() {
-  var factor = 3.5;
+  var factor = 4.5;
   if (scoreValue > 50) {
-    factor = 1;
+    factor = 3.5;
   } else if (scoreValue > 250) {
+    factor = 3;
+  } else if (scoreValue > 250) {
+    factor = 2.5;
+  } else if (scoreValue > 1000) {
     factor = 2;
   }
   return player_height * factor;
