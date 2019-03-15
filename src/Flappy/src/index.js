@@ -251,7 +251,7 @@ function calculateGap() {
     factor = 3.5;
   } else if (scoreValue > 250) {
     factor = 3;
-  } else if (scoreValue > 250) {
+  } else if (scoreValue > 350) {
     factor = 2.5;
   } else if (scoreValue > 1000) {
     factor = 2;
